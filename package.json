@@ -1,0 +1,23 @@
+{
+  "name": "tokens_shader",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "tokens": "style-dictionary build",
+    "tokens:watch": "style-dictionary build --watch"
+  },
+  "devDependencies": {
+    "typescript": "~5.8.3",
+    "vite": "^4.5.14"
+  },
+  "dependencies": {
+    "@types/three": "^0.178.0",
+    "color": "^5.0.0",
+    "style-dictionary": "^5.0.0",
+    "three": "^0.178.0"
+  }
+}
