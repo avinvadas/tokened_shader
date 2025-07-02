@@ -73,6 +73,30 @@ StyleDictionary.registerFormat({
 });
 
 StyleDictionary.registerFormat({
+  name: 'css/layered',
+  formatter: function(dictionary, config) {
+    const refTokens = dictionary.allProperties.filter(prop => prop.path[0] === 'ref');
+    const sysTokens = dictionary.allProperties.filter(prop => prop.path[0] === 'sys');
+    const compTokens = dictionary.allProperties.filter(prop => prop.path[0] === 'comp');
+    
+    return `/* Reference Tokens - Raw values */
+:root {
+${refTokens.map(prop => `  --${prop.name}: ${prop.value};`).join('\n')}
+}
+
+/* System Tokens - Design decisions */
+:root {
+${sysTokens.map(prop => `  --${prop.name}: ${prop.value};`).join('\n')}
+}
+
+/* Component Tokens - Component-specific decisions */
+:root {
+${compTokens.map(prop => `  --${prop.name}: ${prop.value};`).join('\n')}
+}`;
+  }
+});
+
+StyleDictionary.registerFormat({
   name: 'js/module',
   formatter: function(dictionary, config) {
     return `export const tokens = {\n${dictionary.allProperties
@@ -82,10 +106,37 @@ StyleDictionary.registerFormat({
 });
 
 StyleDictionary.registerFormat({
+  name: 'js/layered',
+  formatter: function(dictionary, config) {
+    const refTokens = dictionary.allProperties.filter(prop => prop.path[0] === 'ref');
+    const sysTokens = dictionary.allProperties.filter(prop => prop.path[0] === 'sys');
+    const compTokens = dictionary.allProperties.filter(prop => prop.path[0] === 'comp');
+    
+    return `// Reference Tokens - Raw values
+export const ref = {
+${refTokens.map(prop => `  ${prop.name.replace('ref.', '')}: '${prop.value}'`).join(',\n')}
+};
+
+// System Tokens - Design decisions
+export const sys = {
+${sysTokens.map(prop => `  ${prop.name.replace('sys.', '')}: '${prop.value}'`).join(',\n')}
+};
+
+// Component Tokens - Component-specific decisions
+export const comp = {
+${compTokens.map(prop => `  ${prop.name.replace('comp.', '')}: '${prop.value}'`).join(',\n')}
+};
+
+// Combined tokens object
+export const tokens = { ref, sys, comp };`;
+  }
+});
+
+StyleDictionary.registerFormat({
   name: 'js/three',
   formatter: function(dictionary, config) {
     const threeTokens = dictionary.allProperties.filter(prop => 
-      prop.path[0] === '3d'
+      prop.path.includes('3d') || prop.path.includes('three')
     );
     
     return `export const threeTokens = {\n${threeTokens
@@ -103,6 +154,9 @@ module.exports = {
       files: [{
         destination: 'tokens.css',
         format: 'css/variables'
+      }, {
+        destination: 'tokens-layered.css',
+        format: 'css/layered'
       }]
     },
     scss: {
@@ -119,6 +173,9 @@ module.exports = {
       files: [{
         destination: 'tokens.js',
         format: 'js/module'
+      }, {
+        destination: 'tokens-layered.js',
+        format: 'js/layered'
       }, {
         destination: 'three-tokens.js',
         format: 'js/three'

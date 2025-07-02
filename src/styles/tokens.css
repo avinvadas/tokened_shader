@@ -1,92 +1,291 @@
+/* Reference Tokens - Raw values */
 :root {
-  /* Colors */
-  --color-primary-50: #f0f9ff;
-  --color-primary-100: #e0f2fe;
-  --color-primary-200: #bae6fd;
-  --color-primary-300: #7dd3fc;
-  --color-primary-400: #38bdf8;
-  --color-primary-500: #0ea5e9;
-  --color-primary-600: #0284c7;
-  --color-primary-700: #0369a1;
-  --color-primary-800: #075985;
-  --color-primary-900: #0c4a6e;
+  --ref-color-primary-50: #0c4a6e;
+  --ref-color-primary-100: #075985;
+  --ref-color-primary-200: #0369a1;
+  --ref-color-primary-300: #0284c7;
+  --ref-color-primary-400: #0ea5e9;
+  --ref-color-primary-500: #38bdf8;
+  --ref-color-primary-600: #7dd3fc;
+  --ref-color-primary-700: #bae6fd;
+  --ref-color-primary-800: #e0f2fe;
+  --ref-color-primary-900: #f0f9ff;
+  
+  --ref-color-secondary-50: #701a75;
+  --ref-color-secondary-100: #86198f;
+  --ref-color-secondary-200: #a21caf;
+  --ref-color-secondary-300: #c026d3;
+  --ref-color-secondary-400: #d946ef;
+  --ref-color-secondary-500: #e879f9;
+  --ref-color-secondary-600: #f0abfc;
+  --ref-color-secondary-700: #f5d0fe;
+  --ref-color-secondary-800: #fae8ff;
+  --ref-color-secondary-900: #fdf4ff;
+  
+  --ref-color-neutral-50: #171717;
+  --ref-color-neutral-100: #262626;
+  --ref-color-neutral-200: #404040;
+  --ref-color-neutral-300: #525252;
+  --ref-color-neutral-400: #737373;
+  --ref-color-neutral-500: #a3a3a3;
+  --ref-color-neutral-600: #d4d4d4;
+  --ref-color-neutral-700: #e5e5e5;
+  --ref-color-neutral-800: #f5f5f5;
+  --ref-color-neutral-900: #fafafa;
+  
+  --ref-color-success-50: #14532d;
+  --ref-color-success-100: #166534;
+  --ref-color-success-200: #15803d;
+  --ref-color-success-300: #16a34a;
+  --ref-color-success-400: #22c55e;
+  --ref-color-success-500: #4ade80;
+  --ref-color-success-600: #86efac;
+  --ref-color-success-700: #bbf7d0;
+  --ref-color-success-800: #dcfce7;
+  --ref-color-success-900: #f0fdf4;
+  
+  --ref-color-warning-50: #78350f;
+  --ref-color-warning-100: #92400e;
+  --ref-color-warning-200: #b45309;
+  --ref-color-warning-300: #d97706;
+  --ref-color-warning-400: #f59e0b;
+  --ref-color-warning-500: #fbbf24;
+  --ref-color-warning-600: #fcd34d;
+  --ref-color-warning-700: #fde68a;
+  --ref-color-warning-800: #fef3c7;
+  --ref-color-warning-900: #fffbeb;
+  
+  --ref-color-error-50: #7f1d1d;
+  --ref-color-error-100: #991b1b;
+  --ref-color-error-200: #b91c1c;
+  --ref-color-error-300: #dc2626;
+  --ref-color-error-400: #ef4444;
+  --ref-color-error-500: #f87171;
+  --ref-color-error-600: #fca5a5;
+  --ref-color-error-700: #fecaca;
+  --ref-color-error-800: #fee2e2;
+  --ref-color-error-900: #fef2f2;
+  
+  --ref-font-family-primary: Inter, system-ui, -apple-system, sans-serif;
+  --ref-font-family-secondary: Georgia, serif;
+  --ref-font-family-mono: JetBrains Mono, Consolas, monospace;
+  
+  --ref-font-size-xs: 0.75rem;
+  --ref-font-size-sm: 0.875rem;
+  --ref-font-size-base: 1rem;
+  --ref-font-size-lg: 1.125rem;
+  --ref-font-size-xl: 1.25rem;
+  --ref-font-size-2xl: 1.5rem;
+  --ref-font-size-3xl: 1.875rem;
+  --ref-font-size-4xl: 2.25rem;
+  --ref-font-size-5xl: 3rem;
+  --ref-font-size-6xl: 3.75rem;
+  --ref-font-size-7xl: 4.5rem;
+  --ref-font-size-8xl: 6rem;
+  --ref-font-size-9xl: 8rem;
+  
+  --ref-font-weight-thin: 100;
+  --ref-font-weight-extralight: 200;
+  --ref-font-weight-light: 300;
+  --ref-font-weight-normal: 400;
+  --ref-font-weight-medium: 500;
+  --ref-font-weight-semibold: 600;
+  --ref-font-weight-bold: 700;
+  --ref-font-weight-extrabold: 800;
+  --ref-font-weight-black: 900;
+  
+  --ref-line-height-none: 1;
+  --ref-line-height-tight: 1.25;
+  --ref-line-height-snug: 1.375;
+  --ref-line-height-normal: 1.5;
+  --ref-line-height-relaxed: 1.625;
+  --ref-line-height-loose: 2;
+  
+  --ref-letter-spacing-tighter: -0.05em;
+  --ref-letter-spacing-tight: -0.025em;
+  --ref-letter-spacing-normal: 0em;
+  --ref-letter-spacing-wide: 0.025em;
+  --ref-letter-spacing-wider: 0.05em;
+  --ref-letter-spacing-widest: 0.1em;
+  
+  --ref-spacing-0: 0;
+  --ref-spacing-px: 1px;
+  --ref-spacing-0-5: 0.125rem;
+  --ref-spacing-1: 0.25rem;
+  --ref-spacing-1-5: 0.375rem;
+  --ref-spacing-2: 0.5rem;
+  --ref-spacing-2-5: 0.625rem;
+  --ref-spacing-3: 0.75rem;
+  --ref-spacing-3-5: 0.875rem;
+  --ref-spacing-4: 1rem;
+  --ref-spacing-5: 1.25rem;
+  --ref-spacing-6: 1.5rem;
+  --ref-spacing-7: 1.75rem;
+  --ref-spacing-8: 2rem;
+  --ref-spacing-9: 2.25rem;
+  --ref-spacing-10: 2.5rem;
+  --ref-spacing-11: 2.75rem;
+  --ref-spacing-12: 3rem;
+  --ref-spacing-14: 3.5rem;
+  --ref-spacing-16: 4rem;
+  --ref-spacing-20: 5rem;
+  --ref-spacing-24: 6rem;
+  --ref-spacing-28: 7rem;
+  --ref-spacing-32: 8rem;
+  --ref-spacing-36: 9rem;
+  --ref-spacing-40: 10rem;
+  --ref-spacing-44: 11rem;
+  --ref-spacing-48: 12rem;
+  --ref-spacing-52: 13rem;
+  --ref-spacing-56: 14rem;
+  --ref-spacing-60: 15rem;
+  --ref-spacing-64: 16rem;
+  --ref-spacing-72: 18rem;
+  --ref-spacing-80: 20rem;
+  --ref-spacing-96: 24rem;
+  --ref-spacing-auto: auto;
+}
 
-  --color-secondary-50: #fdf4ff;
-  --color-secondary-100: #fae8ff;
-  --color-secondary-200: #f5d0fe;
-  --color-secondary-300: #f0abfc;
-  --color-secondary-400: #e879f9;
-  --color-secondary-500: #d946ef;
-  --color-secondary-600: #c026d3;
-  --color-secondary-700: #a21caf;
-  --color-secondary-800: #86198f;
-  --color-secondary-900: #701a75;
+/* System Tokens - Design decisions */
+:root {
+  --sys-color-background-primary: var(--ref-color-neutral-900);
+  --sys-color-background-secondary: var(--ref-color-neutral-800);
+  --sys-color-background-tertiary: var(--ref-color-neutral-700);
+  --sys-color-background-inverse: var(--ref-color-neutral-50);
+  
+  --sys-color-surface-primary: var(--ref-color-neutral-800);
+  --sys-color-surface-secondary: var(--ref-color-neutral-700);
+  --sys-color-surface-tertiary: var(--ref-color-neutral-600);
+  --sys-color-surface-elevated: var(--ref-color-neutral-50);
+  
+  --sys-color-text-primary: var(--ref-color-neutral-50);
+  --sys-color-text-secondary: var(--ref-color-neutral-400);
+  --sys-color-text-tertiary: var(--ref-color-neutral-500);
+  --sys-color-text-inverse: var(--ref-color-neutral-900);
+  --sys-color-text-disabled: var(--ref-color-neutral-600);
+  
+  --sys-color-accent-primary: var(--ref-color-primary-500);
+  --sys-color-accent-secondary: var(--ref-color-secondary-500);
+  --sys-color-accent-success: var(--ref-color-success-500);
+  --sys-color-accent-warning: var(--ref-color-warning-500);
+  --sys-color-accent-error: var(--ref-color-error-500);
+  
+  --sys-color-border-primary: var(--ref-color-neutral-600);
+  --sys-color-border-secondary: var(--ref-color-neutral-700);
+  --sys-color-border-focus: var(--ref-color-primary-500);
+  --sys-color-border-error: var(--ref-color-error-500);
+  
+  --sys-color-interactive-hover: var(--ref-color-primary-400);
+  --sys-color-interactive-active: var(--ref-color-primary-600);
+  --sys-color-interactive-disabled: var(--ref-color-neutral-600);
+  
+  --sys-typography-font-family-body: var(--ref-font-family-primary);
+  --sys-typography-font-family-heading: var(--ref-font-family-primary);
+  --sys-typography-font-family-mono: var(--ref-font-family-mono);
+  --sys-typography-font-family-display: var(--ref-font-family-secondary);
+  
+  --sys-typography-font-size-body: var(--ref-font-size-base);
+  --sys-typography-font-size-body-small: var(--ref-font-size-sm);
+  --sys-typography-font-size-body-large: var(--ref-font-size-lg);
+  --sys-typography-font-size-heading-1: var(--ref-font-size-5xl);
+  --sys-typography-font-size-heading-2: var(--ref-font-size-4xl);
+  --sys-typography-font-size-heading-3: var(--ref-font-size-3xl);
+  --sys-typography-font-size-heading-4: var(--ref-font-size-2xl);
+  --sys-typography-font-size-heading-5: var(--ref-font-size-xl);
+  --sys-typography-font-size-heading-6: var(--ref-font-size-lg);
+  --sys-typography-font-size-caption: var(--ref-font-size-xs);
+  --sys-typography-font-size-display: var(--ref-font-size-8xl);
+  
+  --sys-typography-font-weight-body: var(--ref-font-weight-normal);
+  --sys-typography-font-weight-heading: var(--ref-font-weight-semibold);
+  --sys-typography-font-weight-bold: var(--ref-font-weight-bold);
+  --sys-typography-font-weight-light: var(--ref-font-weight-light);
+  --sys-typography-font-weight-medium: var(--ref-font-weight-medium);
+  --sys-typography-font-weight-normal: var(--ref-font-weight-normal);
+  
+  --sys-typography-line-height-body: var(--ref-line-height-relaxed);
+  --sys-typography-line-height-heading: var(--ref-line-height-tight);
+  --sys-typography-line-height-tight: var(--ref-line-height-tight);
+  --sys-typography-line-height-normal: var(--ref-line-height-normal);
+  
+  --sys-typography-letter-spacing-body: var(--ref-letter-spacing-normal);
+  --sys-typography-letter-spacing-heading: var(--ref-letter-spacing-tight);
+  --sys-typography-letter-spacing-display: var(--ref-letter-spacing-tighter);
+  
+  --sys-spacing-xs: var(--ref-spacing-1);
+  --sys-spacing-sm: var(--ref-spacing-2);
+  --sys-spacing-md: var(--ref-spacing-4);
+  --sys-spacing-lg: var(--ref-spacing-6);
+  --sys-spacing-xl: var(--ref-spacing-8);
+  --sys-spacing-2xl: var(--ref-spacing-12);
+  --sys-spacing-3xl: var(--ref-spacing-16);
+  --sys-spacing-4xl: var(--ref-spacing-24);
+  --sys-spacing-5xl: var(--ref-spacing-32);
+  --sys-spacing-6xl: var(--ref-spacing-48);
+  
+  --sys-layout-container-padding: var(--ref-spacing-4);
+  --sys-layout-container-max-width: 1200px;
+  --sys-layout-section-padding: var(--ref-spacing-16);
+  --sys-layout-grid-gap: var(--ref-spacing-6);
+}
 
-  --color-neutral-50: #fafafa;
-  --color-neutral-100: #f5f5f5;
-  --color-neutral-200: #e5e5e5;
-  --color-neutral-300: #d4d4d4;
-  --color-neutral-400: #a3a3a3;
-  --color-neutral-500: #737373;
-  --color-neutral-600: #525252;
-  --color-neutral-700: #404040;
-  --color-neutral-800: #262626;
-  --color-neutral-900: #171717;
-
-  --color-background-primary: #fafafa;
-  --color-background-secondary: #f5f5f5;
-  --color-background-tertiary: #e5e5e5;
-
-  --color-text-primary: #171717;
-  --color-text-secondary: #525252;
-  --color-text-tertiary: #737373;
-  --color-text-inverse: #fafafa;
-
-  /* Typography */
-  --typography-font-family-primary: Inter, system-ui, -apple-system, sans-serif;
-  --typography-font-family-secondary: Georgia, serif;
-  --typography-font-family-mono: JetBrains Mono, Consolas, monospace;
-
-  --typography-font-size-xs: 0.75rem;
-  --typography-font-size-sm: 0.875rem;
-  --typography-font-size-base: 1rem;
-  --typography-font-size-lg: 1.125rem;
-  --typography-font-size-xl: 1.25rem;
-  --typography-font-size-2xl: 1.5rem;
-  --typography-font-size-3xl: 1.875rem;
-  --typography-font-size-4xl: 2.25rem;
-  --typography-font-size-5xl: 3rem;
-  --typography-font-size-6xl: 3.75rem;
-  --typography-font-size-7xl: 4.5rem;
-  --typography-font-size-8xl: 6rem;
-  --typography-font-size-9xl: 8rem;
-
-  --typography-font-weight-thin: 100;
-  --typography-font-weight-extralight: 200;
-  --typography-font-weight-light: 300;
-  --typography-font-weight-normal: 400;
-  --typography-font-weight-medium: 500;
-  --typography-font-weight-semibold: 600;
-  --typography-font-weight-bold: 700;
-  --typography-font-weight-extrabold: 800;
-  --typography-font-weight-black: 900;
-
-  --typography-line-height-none: 1;
-  --typography-line-height-tight: 1.25;
-  --typography-line-height-snug: 1.375;
-  --typography-line-height-normal: 1.5;
-  --typography-line-height-relaxed: 1.625;
-  --typography-line-height-loose: 2;
-
-  /* Spacing */
-  --spacing-xs: 0.25rem;
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-  --spacing-xl: 2rem;
-  --spacing-2xl: 3rem;
-  --spacing-3xl: 4rem;
-  --spacing-4xl: 6rem;
-  --spacing-5xl: 8rem;
-  --spacing-6xl: 12rem;
+/* Component Tokens - Component-specific decisions */
+:root {
+  --comp-button-primary-background-color: var(--sys-color-accent-primary);
+  --comp-button-primary-color: var(--sys-color-text-inverse);
+  --comp-button-primary-font-size: var(--sys-typography-font-size-body);
+  --comp-button-primary-font-weight: var(--sys-typography-font-weight-bold);
+  --comp-button-primary-padding: var(--sys-spacing-md);
+  --comp-button-primary-border-radius: 8px;
+  --comp-button-primary-hover-background-color: var(--sys-color-interactive-hover);
+  --comp-button-primary-active-background-color: var(--sys-color-interactive-active);
+  --comp-button-primary-disabled-background-color: var(--sys-color-interactive-disabled);
+  --comp-button-primary-disabled-color: var(--sys-color-text-disabled);
+  
+  --comp-button-secondary-background-color: transparent;
+  --comp-button-secondary-color: var(--sys-color-accent-primary);
+  --comp-button-secondary-font-size: var(--sys-typography-font-size-body);
+  --comp-button-secondary-font-weight: var(--sys-typography-font-weight-medium);
+  --comp-button-secondary-padding: var(--sys-spacing-md);
+  --comp-button-secondary-border-radius: 8px;
+  --comp-button-secondary-border: 2px solid var(--sys-color-accent-primary);
+  --comp-button-secondary-hover-background-color: var(--sys-color-accent-primary);
+  --comp-button-secondary-hover-color: var(--sys-color-text-inverse);
+  
+  --comp-hero-title-font-size: var(--sys-typography-font-size-display);
+  --comp-hero-title-font-weight: var(--sys-typography-font-weight-bold);
+  --comp-hero-title-color: var(--sys-color-text-primary);
+  --comp-hero-title-line-height: var(--sys-typography-line-height-heading);
+  --comp-hero-title-letter-spacing: var(--sys-typography-letter-spacing-display);
+  
+  --comp-hero-subtitle-font-size: var(--sys-typography-font-size-heading-3);
+  --comp-hero-subtitle-font-weight: var(--sys-typography-font-weight-light);
+  --comp-hero-subtitle-color: var(--sys-color-text-secondary);
+  --comp-hero-subtitle-line-height: var(--sys-typography-line-height-body);
+  
+  --comp-hero-description-font-size: var(--sys-typography-font-size-body-large);
+  --comp-hero-description-font-weight: var(--sys-typography-font-weight-normal);
+  --comp-hero-description-color: var(--sys-color-text-secondary);
+  --comp-hero-description-line-height: var(--sys-typography-line-height-body);
+  
+  --comp-hero-background-background-color: var(--sys-color-background-primary);
+  --comp-hero-background-padding: var(--sys-layout-section-padding);
+  
+  --comp-section-title-font-size: var(--sys-typography-font-size-heading-2);
+  --comp-section-title-font-weight: var(--sys-typography-font-weight-bold);
+  --comp-section-title-color: var(--sys-color-text-primary);
+  --comp-section-title-line-height: var(--sys-typography-line-height-heading);
+  
+  --comp-section-subtitle-font-size: var(--sys-typography-font-size-heading-4);
+  --comp-section-subtitle-font-weight: var(--sys-typography-font-weight-medium);
+  --comp-section-subtitle-color: var(--sys-color-text-secondary);
+  --comp-section-subtitle-line-height: var(--sys-typography-line-height-body);
+  
+  --comp-section-content-font-size: var(--sys-typography-font-size-body);
+  --comp-section-content-font-weight: var(--sys-typography-font-weight-normal);
+  --comp-section-content-color: var(--sys-color-text-primary);
+  --comp-section-content-line-height: var(--sys-typography-line-height-body);
+  
+  --comp-section-background-background-color: var(--sys-color-background-secondary);
+  --comp-section-background-padding: var(--sys-layout-section-padding);
 } 
