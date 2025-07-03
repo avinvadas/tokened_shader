@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { tokens } from '../tokens';
+import { styleGauge, styleGaugeMapping } from '../style-gauge-tokens';
 
 export class HeroScene {
   private scene: THREE.Scene;
@@ -52,6 +53,16 @@ export class HeroScene {
     const primaryColor = this.hexToRgb(tokens.three.shaders.colors.primary);
     const neutralColor = this.hexToRgb(tokens.three.shaders.colors.neutral);
 
+    // Get style gauge values for shader parameters
+    const depthValue = styleGauge.depth.medium; // 0.5
+    const motionValue = styleGauge.motion.smooth; // 0.5
+    const intensityValue = styleGauge.intensity.moderate; // 0.5
+
+    // Map style gauge values to concrete shader parameters
+    const depthParams = styleGaugeMapping.depth.shader(depthValue);
+    const motionParams = styleGaugeMapping.motion.shader(motionValue);
+    const intensityParams = styleGaugeMapping.intensity.shader(intensityValue);
+
     // Create shader material with vertex displacement and color stripes
     const material = new THREE.ShaderMaterial({
       vertexShader: this.getVertexShader(),
@@ -70,10 +81,17 @@ export class HeroScene {
         u_distance_variation: { value: tokens.three.shaders.ripple.distanceVariation },
         u_distance_variation_speed: { value: tokens.three.shaders.ripple.distanceVariationSpeed },
         u_distance_variation_intensity: { value: tokens.three.shaders.ripple.distanceVariationIntensity },
-        // Vertex shader parameters (shared with fragment shader)
-        u_wave_amplitude: { value: tokens.three.shaders.vertex.waveAmplitude },
-        u_wave_frequency: { value: tokens.three.shaders.vertex.waveFrequency },
-        u_wave_speed: { value: tokens.three.shaders.vertex.waveSpeed }
+        // Vertex shader parameters (now controlled by style gauge)
+        u_wave_amplitude: { value: depthParams.vertexAmplitude },
+        u_wave_frequency: { value: motionParams.waveFrequency },
+        u_wave_speed: { value: motionParams.waveSpeed },
+        // New style gauge controlled parameters
+        u_twirl_intensity: { value: motionParams.twirlIntensity },
+        u_highlight_power: { value: depthParams.fragmentHighlight },
+        u_shadow_power: { value: depthParams.fragmentShadow },
+        u_color_saturation: { value: intensityParams.colorSaturation },
+        u_contrast_multiplier: { value: intensityParams.contrastMultiplier },
+        u_noise_amount: { value: intensityParams.noiseAmount }
       },
       transparent: true
     });
@@ -93,10 +111,17 @@ export class HeroScene {
       u_distance_variation: { value: tokens.three.shaders.ripple.distanceVariation },
       u_distance_variation_speed: { value: tokens.three.shaders.ripple.distanceVariationSpeed },
       u_distance_variation_intensity: { value: tokens.three.shaders.ripple.distanceVariationIntensity },
-      // Vertex shader parameters (shared with fragment shader)
-      u_wave_amplitude: { value: tokens.three.shaders.vertex.waveAmplitude },
-      u_wave_frequency: { value: tokens.three.shaders.vertex.waveFrequency },
-      u_wave_speed: { value: tokens.three.shaders.vertex.waveSpeed }
+      // Vertex shader parameters (now controlled by style gauge)
+      u_wave_amplitude: { value: depthParams.vertexAmplitude },
+      u_wave_frequency: { value: motionParams.waveFrequency },
+      u_wave_speed: { value: motionParams.waveSpeed },
+      // New style gauge controlled parameters
+      u_twirl_intensity: { value: motionParams.twirlIntensity },
+      u_highlight_power: { value: depthParams.fragmentHighlight },
+      u_shadow_power: { value: depthParams.fragmentShadow },
+      u_color_saturation: { value: intensityParams.colorSaturation },
+      u_contrast_multiplier: { value: intensityParams.contrastMultiplier },
+      u_noise_amount: { value: intensityParams.noiseAmount }
     };
 
     this.plane = new THREE.Mesh(geometry, material);
@@ -192,6 +217,7 @@ export class HeroScene {
       uniform float u_wave_amplitude;
       uniform float u_wave_frequency;
       uniform float u_wave_speed;
+      uniform float u_twirl_intensity;
       
       varying vec2 vUv;
       varying float vWaveHeight;
@@ -208,10 +234,10 @@ export class HeroScene {
         // Calculate mouse position in UV space for twirling
         vec2 mouse_uv = (u_mouse + vec2(1.0)) * 0.5;
         
-        // Calculate twirling effect around mouse position
+        // Calculate twirling effect around mouse position (now controlled by style gauge)
         vec2 to_mouse = uv - mouse_uv;
         float mouse_dist = length(to_mouse);
-        float twirl_strength = 0.8; // How strong the twirling effect is
+        float twirl_strength = u_twirl_intensity; // Now controlled by style gauge
         float twirl_falloff = 3.0; // How quickly twirling diminishes with distance
         
         // Calculate twirling angle based on distance from mouse
@@ -285,6 +311,12 @@ export class HeroScene {
       uniform float u_distance_variation_intensity;
       uniform float u_wave_frequency;
       uniform float u_wave_speed;
+      uniform float u_twirl_intensity;
+      uniform float u_highlight_power;
+      uniform float u_shadow_power;
+      uniform float u_color_saturation;
+      uniform float u_contrast_multiplier;
+      uniform float u_noise_amount;
       
       varying vec2 vUv;
       varying float vWaveHeight;
@@ -300,10 +332,10 @@ export class HeroScene {
         // Calculate mouse position in UV space for twirling
         vec2 mouse_uv = (u_mouse + vec2(1.0)) * 0.5;
         
-        // Calculate twirling effect around mouse position (same as vertex shader)
+        // Calculate twirling effect around mouse position (now controlled by style gauge)
         vec2 to_mouse = vUv - mouse_uv;
         float mouse_dist = length(to_mouse);
-        float twirl_strength = 0.8; // How strong the twirling effect is
+        float twirl_strength = u_twirl_intensity; // Now controlled by style gauge
         float twirl_falloff = 3.0; // How quickly twirling diminishes with distance
         
         // Calculate twirling angle based on distance from mouse
@@ -332,19 +364,23 @@ export class HeroScene {
         // Multi-level smoothstep for better anti-aliasing
         float color_mix = smoothstep(threshold - transition_width, threshold + transition_width, ripple);
         
-        // Add subtle noise to break up banding
+        // Add subtle noise to break up banding (now controlled by style gauge)
         float noise = fract(sin(dot(vUv * 100.0, vec2(12.9898, 78.233))) * 43758.5453);
-        color_mix += (noise - 0.5) * 0.02;
+        color_mix += (noise - 0.5) * u_noise_amount;
         color_mix = clamp(color_mix, 0.0, 1.0);
         
-        // Mix colors with smooth transition
+        // Mix colors with smooth transition and style gauge controlled saturation
         vec3 color = mix(u_neutral_color, u_primary_color, color_mix);
+        
+        // Apply style gauge controlled color saturation
+        float luminance = dot(color, vec3(0.299, 0.587, 0.114));
+        color = mix(vec3(luminance), color, u_color_saturation);
         
         // Add subtle distance-based variation for visual interest
         float distance_factor = sin(dist * u_distance_variation + u_time * u_distance_variation_speed) * u_distance_variation_intensity;
         color += distance_factor;
         
-        // Advanced lighting calculation with multiple techniques
+        // Advanced lighting calculation with multiple techniques (now controlled by style gauge)
         vec3 light_dir = normalize(vec3(1.0, 1.0, 1.0));
         vec3 normal = normalize(vNormal);
         
@@ -352,21 +388,21 @@ export class HeroScene {
         vec3 light_dir2 = normalize(vec3(-0.5, 0.8, 0.3));
         vec3 light_dir3 = normalize(vec3(0.0, -0.5, 0.8));
         
-        // Enhanced diffuse lighting with soft shadows
-        float diffuse1 = max(dot(normal, light_dir), 0.0);
-        float diffuse2 = max(dot(normal, light_dir2), 0.0) * 0.4;
-        float diffuse3 = max(dot(normal, light_dir3), 0.0) * 0.3;
+        // Enhanced diffuse lighting with soft shadows (now controlled by style gauge)
+        float diffuse1 = max(dot(normal, light_dir), 0.0) * u_highlight_power;
+        float diffuse2 = max(dot(normal, light_dir2), 0.0) * 0.4 * u_highlight_power;
+        float diffuse3 = max(dot(normal, light_dir3), 0.0) * 0.3 * u_highlight_power;
         
-        // Improved specular lighting with fresnel effect
+        // Improved specular lighting with fresnel effect (now controlled by style gauge)
         vec3 view_dir = normalize(-vPosition);
         vec3 half_dir = normalize(light_dir + view_dir);
-        float specular = pow(max(dot(normal, half_dir), 0.0), 64.0) * 0.6;
+        float specular = pow(max(dot(normal, half_dir), 0.0), 64.0) * 0.6 * u_highlight_power;
         
-        // Fresnel effect for realistic edge lighting
-        float fresnel = pow(1.0 - max(dot(normal, view_dir), 0.0), 3.0) * 0.3;
+        // Fresnel effect for realistic edge lighting (now controlled by style gauge)
+        float fresnel = pow(1.0 - max(dot(normal, view_dir), 0.0), 3.0) * 0.3 * u_highlight_power;
         
-        // Distance-based ambient occlusion
-        float ao = 1.0 - smoothstep(0.0, 0.5, dist) * 0.2;
+        // Distance-based ambient occlusion (now controlled by style gauge)
+        float ao = 1.0 - smoothstep(0.0, 0.5, dist) * u_shadow_power;
         
         // Advanced lighting composition
         float ambient = 0.35;
@@ -374,6 +410,9 @@ export class HeroScene {
         
         // Apply lighting to color with smooth falloff
         color *= lighting;
+        
+        // Apply style gauge controlled contrast
+        color = (color - 0.5) * u_contrast_multiplier + 0.5;
         
         // Final color refinement and gamma correction
         color = pow(color, vec3(0.95)); // Slight gamma correction for better contrast

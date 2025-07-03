@@ -145,6 +145,70 @@ StyleDictionary.registerFormat({
   }
 });
 
+StyleDictionary.registerFormat({
+  name: 'js/styleGauge',
+  formatter: function(dictionary, config) {
+    const styleGaugeTokens = dictionary.allProperties.filter(prop => 
+      prop.path[0] === 'styleGauge'
+    );
+    
+    const styleGauge = {};
+    styleGaugeTokens.forEach(prop => {
+      const [_, category, level] = prop.path;
+      if (!styleGauge[category]) styleGauge[category] = {};
+      styleGauge[category][level] = prop.value;
+    });
+    
+    return `// Style Gauge Tokens - Abstract design decisions
+export const styleGauge = ${JSON.stringify(styleGauge, null, 2)};
+
+// Mapping functions for style gauge to concrete values
+export const styleGaugeMapping = {
+  depth: {
+    boxShadow: (depth) => ({
+      spread: depth * 20,
+      distance: depth * 8,
+      opacity: depth * 0.3
+    }),
+    textShadow: (depth) => ({
+      spread: depth * 2,
+      distance: depth * 1,
+      opacity: depth * 0.2
+    }),
+    zIndex: (depth) => Math.floor(depth * 10),
+    parallax: (depth) => depth * 0.1,
+    shader: (depth) => ({
+      vertexAmplitude: depth * 0.1,
+      fragmentHighlight: depth * 0.8,
+      fragmentShadow: depth * 0.6
+    })
+  },
+  motion: {
+    shader: (motion) => ({
+      waveFrequency: motion * 2.0,
+      waveSpeed: motion * 1.5,
+      twirlIntensity: motion * 0.5
+    }),
+    css: (motion) => ({
+      transitionDuration: (1 - motion) * 0.3 + 0.1,
+      animationSpeed: motion * 2.0
+    })
+  },
+  intensity: {
+    shader: (intensity) => ({
+      colorSaturation: intensity * 1.2,
+      contrastMultiplier: intensity * 1.5,
+      noiseAmount: intensity * 0.3
+    }),
+    css: (intensity) => ({
+      filterContrast: intensity * 0.5 + 1,
+      filterSaturate: intensity * 0.3 + 1
+    })
+  }
+};`;
+  }
+});
+
 module.exports = {
   source: ['tokens/**/*.json'],
   platforms: {
@@ -179,6 +243,9 @@ module.exports = {
       }, {
         destination: 'three-tokens.js',
         format: 'js/three'
+      }, {
+        destination: 'style-gauge-tokens.js',
+        format: 'js/styleGauge'
       }]
     }
   }

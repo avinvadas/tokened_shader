@@ -1,0 +1,49 @@
+{
+  "styleGaugeMapping": {
+    "depth": {
+      "box-shadow": {
+        "spread": "function(depth) { return depth * 20; }",
+        "distance": "function(depth) { return depth * 8; }",
+        "opacity": "function(depth) { return depth * 0.3; }"
+      },
+      "text-shadow": {
+        "spread": "function(depth) { return depth * 2; }",
+        "distance": "function(depth) { return depth * 1; }",
+        "opacity": "function(depth) { return depth * 0.2; }"
+      },
+      "z-index": {
+        "level": "function(depth) { return Math.floor(depth * 10); }"
+      },
+      "parallax": {
+        "ratio": "function(depth) { return depth * 0.1; }"
+      },
+      "shader": {
+        "vertex-amplitude": "function(depth) { return depth * 0.1; }",
+        "fragment-highlight": "function(depth) { return depth * 0.8; }",
+        "fragment-shadow": "function(depth) { return depth * 0.6; }"
+      }
+    },
+    "motion": {
+      "shader": {
+        "wave-frequency": "function(motion) { return motion * 2.0; }",
+        "wave-speed": "function(motion) { return motion * 1.5; }",
+        "twirl-intensity": "function(motion) { return motion * 0.5; }"
+      },
+      "css": {
+        "transition-duration": "function(motion) { return (1 - motion) * 0.3 + 0.1; }",
+        "animation-speed": "function(motion) { return motion * 2.0; }"
+      }
+    },
+    "intensity": {
+      "shader": {
+        "color-saturation": "function(intensity) { return intensity * 1.2; }",
+        "contrast-multiplier": "function(intensity) { return intensity * 1.5; }",
+        "noise-amount": "function(intensity) { return intensity * 0.3; }"
+      },
+      "css": {
+        "filter-contrast": "function(intensity) { return intensity * 0.5 + 1; }",
+        "filter-saturate": "function(intensity) { return intensity * 0.3 + 1; }"
+      }
+    }
+  }
+} 

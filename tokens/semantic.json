@@ -1,0 +1,70 @@
+{
+  "styleGauge": {
+    "depth": {
+      "none": {
+        "value": 0,
+        "type": "number"
+      },
+      "subtle": {
+        "value": 0.25,
+        "type": "number"
+      },
+      "medium": {
+        "value": 0.5,
+        "type": "number"
+      },
+      "prominent": {
+        "value": 0.75,
+        "type": "number"
+      },
+      "extreme": {
+        "value": 1,
+        "type": "number"
+      }
+    },
+    "motion": {
+      "none": {
+        "value": 0,
+        "type": "number"
+      },
+      "subtle": {
+        "value": 0.25,
+        "type": "number"
+      },
+      "smooth": {
+        "value": 0.5,
+        "type": "number"
+      },
+      "dynamic": {
+        "value": 0.75,
+        "type": "number"
+      },
+      "energetic": {
+        "value": 1,
+        "type": "number"
+      }
+    },
+    "intensity": {
+      "minimal": {
+        "value": 0,
+        "type": "number"
+      },
+      "gentle": {
+        "value": 0.25,
+        "type": "number"
+      },
+      "moderate": {
+        "value": 0.5,
+        "type": "number"
+      },
+      "strong": {
+        "value": 0.75,
+        "type": "number"
+      },
+      "maximum": {
+        "value": 1,
+        "type": "number"
+      }
+    }
+  }
+} 
