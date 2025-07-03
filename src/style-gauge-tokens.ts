@@ -39,16 +39,16 @@ export const styleGaugeMapping = {
     zIndex: (depth: number) => Math.floor(depth * 10),
     parallax: (depth: number) => depth * 0.1,
     shader: (depth: number) => ({
-      vertexAmplitude: depth * 0.1,
-      fragmentHighlight: depth * 0.8,
-      fragmentShadow: depth * 0.6
+      vertexAmplitude: depth * 0.05, // Reduced for subtler waves
+      fragmentHighlight: depth * 0.4 + 0.6, // Preserve base lighting
+      fragmentShadow: depth * 0.3 + 0.1 // Preserve base shadows
     })
   },
   motion: {
     shader: (motion: number) => ({
       waveFrequency: motion * 2.0,
       waveSpeed: motion * 1.5,
-      twirlIntensity: motion * 0.5
+      twirlIntensity: motion * 0.3 // Reduced to not interfere with ripples
     }),
     css: (motion: number) => ({
       transitionDuration: (1 - motion) * 0.3 + 0.1,
@@ -57,9 +57,9 @@ export const styleGaugeMapping = {
   },
   intensity: {
     shader: (intensity: number) => ({
-      colorSaturation: intensity * 1.2,
-      contrastMultiplier: intensity * 1.5,
-      noiseAmount: intensity * 0.3
+      colorSaturation: intensity * 0.8 + 0.2, // Preserve some saturation even at minimum
+      contrastMultiplier: intensity * 0.5 + 1.0, // Start at 1.0, go up to 1.5
+      noiseAmount: intensity * 0.2
     }),
     css: (intensity: number) => ({
       filterContrast: intensity * 0.5 + 1,

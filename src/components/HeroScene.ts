@@ -256,8 +256,8 @@ export class HeroScene {
         vec2 uv_centered = twirled_uv - center;
         float dist = length(uv_centered);
         
-        // Create wave effect synchronized with fragment shader ripples
-        float wave = sin(dist * u_wave_frequency * 6.28318 - u_time * u_wave_speed);
+        // Create wave effect synchronized with fragment shader ripples (7 rings)
+        float wave = sin(dist * u_ripple_count * 6.28318 - u_time * u_ripple_speed);
         
         // Calculate wave height (positive for primary color areas, negative for neutral)
         // This creates peaks at ripple centers and valleys at neutral areas
@@ -268,7 +268,7 @@ export class HeroScene {
         pos.z += wave_height;
         
         // Advanced normal calculation with better mathematical precision
-        float wave_derivative = cos(dist * u_wave_frequency * 6.28318 - u_time * u_wave_speed) * u_wave_frequency * 6.28318 * u_wave_amplitude;
+        float wave_derivative = cos(dist * u_ripple_count * 6.28318 - u_time * u_ripple_speed) * u_ripple_count * 6.28318 * u_wave_amplitude;
         
         // Improved normal calculation with better falloff and precision
         float dist_safe = max(dist, 0.001);
@@ -354,12 +354,12 @@ export class HeroScene {
         vec2 uv = twirled_uv - center;
         float dist = length(uv);
         
-        // Create ripple effect synchronized with vertex shader
-        float ripple = sin(dist * u_wave_frequency * 6.28318 - u_time * u_wave_speed);
+        // Create ripple effect with proper count (7 rings)
+        float ripple = sin(dist * u_ripple_count * 6.28318 - u_time * u_ripple_speed);
         
         // Advanced color transitions with multiple techniques
         float threshold = 0.0;
-        float transition_width = 0.015; // Tighter transition for sharper edges
+        float transition_width = u_ripple_width; // Use token-controlled width
         
         // Multi-level smoothstep for better anti-aliasing
         float color_mix = smoothstep(threshold - transition_width, threshold + transition_width, ripple);
@@ -369,12 +369,14 @@ export class HeroScene {
         color_mix += (noise - 0.5) * u_noise_amount;
         color_mix = clamp(color_mix, 0.0, 1.0);
         
-        // Mix colors with smooth transition and style gauge controlled saturation
+        // Mix colors with smooth transition
         vec3 color = mix(u_neutral_color, u_primary_color, color_mix);
         
-        // Apply style gauge controlled color saturation
+        // Apply style gauge controlled color saturation (preserve original lightness)
         float luminance = dot(color, vec3(0.299, 0.587, 0.114));
-        color = mix(vec3(luminance), color, u_color_saturation);
+        vec3 saturated_color = mix(vec3(luminance), color, u_color_saturation);
+        // Blend between original and saturated color to preserve lightness
+        color = mix(color, saturated_color, 0.7);
         
         // Add subtle distance-based variation for visual interest
         float distance_factor = sin(dist * u_distance_variation + u_time * u_distance_variation_speed) * u_distance_variation_intensity;
