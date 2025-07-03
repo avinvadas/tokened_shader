@@ -176,7 +176,6 @@ function setupStyleGaugeControls(): void {
   // Create controls for each style gauge
   const gauges = [
     { name: 'depth', label: 'Depth', value: styleGauge.depth.medium },
-    { name: 'motion', label: 'Motion', value: styleGauge.motion.smooth },
     { name: 'intensity', label: 'Intensity', value: styleGauge.intensity.moderate }
   ];
 
@@ -229,15 +228,8 @@ function updateStyleGauge(gaugeName: string, value: number): void {
     case 'depth':
       const depthParams = styleGaugeMapping.depth.shader(value);
       material.uniforms.u_wave_amplitude.value = depthParams.vertexAmplitude;
-      material.uniforms.u_highlight_power.value = depthParams.fragmentHighlight;
-      material.uniforms.u_shadow_power.value = depthParams.fragmentShadow;
-      break;
-    
-    case 'motion':
-      const motionParams = styleGaugeMapping.motion.shader(value);
-      material.uniforms.u_wave_frequency.value = motionParams.waveFrequency;
-      material.uniforms.u_wave_speed.value = motionParams.waveSpeed;
-      material.uniforms.u_twirl_intensity.value = motionParams.twirlIntensity;
+      material.uniforms.u_lighting_intensity.value = depthParams.lightingIntensity;
+      material.uniforms.u_preserve_original_colors.value = depthParams.preserveOriginalColors;
       break;
     
     case 'intensity':
@@ -247,6 +239,12 @@ function updateStyleGauge(gaugeName: string, value: number): void {
       material.uniforms.u_noise_amount.value = intensityParams.noiseAmount;
       break;
   }
+  
+  // Always set motion to 1.0 (full motion)
+  const motionParams = styleGaugeMapping.motion.shader(1.0);
+  material.uniforms.u_wave_frequency.value = motionParams.waveFrequency;
+  material.uniforms.u_wave_speed.value = motionParams.waveSpeed;
+  material.uniforms.u_twirl_intensity.value = motionParams.twirlIntensity;
 
   console.log(`Updated ${gaugeName} to ${value}`);
 }

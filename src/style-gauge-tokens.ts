@@ -39,9 +39,9 @@ export const styleGaugeMapping = {
     zIndex: (depth: number) => Math.floor(depth * 10),
     parallax: (depth: number) => depth * 0.1,
     shader: (depth: number) => ({
-      vertexAmplitude: depth * 0.05, // Reduced for subtler waves
-      fragmentHighlight: depth * 0.4 + 0.6, // Preserve base lighting
-      fragmentShadow: depth * 0.3 + 0.1 // Preserve base shadows
+      vertexAmplitude: depth * 0.1, // Full amplitude at depth 1.0
+      lightingIntensity: depth, // 0 = no 3D lighting, 1 = full 3D lighting
+      preserveOriginalColors: 1.0 - depth // 1 = pure colors, 0 = full lighting
     })
   },
   motion: {

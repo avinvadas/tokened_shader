@@ -55,7 +55,7 @@ export class HeroScene {
 
     // Get style gauge values for shader parameters
     const depthValue = styleGauge.depth.medium; // 0.5
-    const motionValue = styleGauge.motion.smooth; // 0.5
+    const motionValue = 1.0; // Always full motion
     const intensityValue = styleGauge.intensity.moderate; // 0.5
 
     // Map style gauge values to concrete shader parameters
@@ -87,8 +87,8 @@ export class HeroScene {
         u_wave_speed: { value: motionParams.waveSpeed },
         // New style gauge controlled parameters
         u_twirl_intensity: { value: motionParams.twirlIntensity },
-        u_highlight_power: { value: depthParams.fragmentHighlight },
-        u_shadow_power: { value: depthParams.fragmentShadow },
+        u_lighting_intensity: { value: depthParams.lightingIntensity },
+        u_preserve_original_colors: { value: depthParams.preserveOriginalColors },
         u_color_saturation: { value: intensityParams.colorSaturation },
         u_contrast_multiplier: { value: intensityParams.contrastMultiplier },
         u_noise_amount: { value: intensityParams.noiseAmount }
@@ -122,8 +122,8 @@ export class HeroScene {
       u_wave_speed: { value: motionParams.waveSpeed },
       // New style gauge controlled parameters
       u_twirl_intensity: { value: motionParams.twirlIntensity },
-      u_highlight_power: { value: depthParams.fragmentHighlight },
-      u_shadow_power: { value: depthParams.fragmentShadow },
+      u_lighting_intensity: { value: depthParams.lightingIntensity },
+      u_preserve_original_colors: { value: depthParams.preserveOriginalColors },
       u_color_saturation: { value: intensityParams.colorSaturation },
       u_contrast_multiplier: { value: intensityParams.contrastMultiplier },
       u_noise_amount: { value: intensityParams.noiseAmount }
@@ -133,23 +133,10 @@ export class HeroScene {
     this.scene.add(this.plane);
 
     // Debug shader compilation
-    console.log('Shader material created:', material);
-    console.log('Shader uniforms:', material.uniforms);
-    console.log('Primary color:', primaryColor);
-    console.log('Neutral color:', neutralColor);
-    console.log('Ripple count:', tokens.three.shaders.ripple.count);
+    console.log('Shader material created with depth-controlled rendering');
     console.log('Style gauge values:', { depthValue, motionValue, intensityValue });
 
-    // Create a simple fallback material for testing
-    const fallbackMaterial = new THREE.MeshBasicMaterial({ 
-      color: 0xff0000, 
-      transparent: true, 
-      opacity: 0.5 
-    });
-    const fallbackPlane = new THREE.Mesh(geometry, fallbackMaterial);
-    fallbackPlane.position.z = -0.1; // Behind the main plane
-    this.scene.add(fallbackPlane);
-    console.log('Added fallback red plane for testing');
+
 
     // Set initial plane geometry size
     this.updatePlaneGeometry();
@@ -242,6 +229,7 @@ export class HeroScene {
       uniform float u_ripple_count;
       uniform float u_ripple_speed;
       uniform float u_twirl_intensity;
+      uniform float u_lighting_intensity;
       
       varying vec2 vUv;
       varying float vWaveHeight;
@@ -287,9 +275,9 @@ export class HeroScene {
         // This creates peaks at ripple centers and valleys at neutral areas
         float wave_height = wave * u_wave_amplitude;
         
-        // Apply wave displacement to vertex position
+        // Apply wave displacement to vertex position (controlled by depth)
         vec3 pos = position;
-        pos.z += wave_height;
+        pos.z += wave_height * u_lighting_intensity; // Smooth transition from 0 to full displacement
         
         // Advanced normal calculation with better mathematical precision
         float wave_derivative = cos(dist * u_ripple_count * 6.28318 - u_time * u_ripple_speed) * u_ripple_count * 6.28318 * u_wave_amplitude;
@@ -308,6 +296,9 @@ export class HeroScene {
         vec3 original_normal = vec3(0.0, 0.0, 1.0);
         float blend_factor = smoothstep(0.0, 0.3, dist) * smoothstep(1.0, 0.7, dist);
         normal = mix(original_normal, normal, blend_factor);
+        
+        // Apply depth control to normal calculation - smooth transition
+        normal = mix(original_normal, normal, u_lighting_intensity);
         
         // Pass data to fragment shader
         vWaveHeight = wave_height;
@@ -336,8 +327,8 @@ export class HeroScene {
       uniform float u_wave_frequency;
       uniform float u_wave_speed;
       uniform float u_twirl_intensity;
-      uniform float u_highlight_power;
-      uniform float u_shadow_power;
+      uniform float u_lighting_intensity;
+      uniform float u_preserve_original_colors;
       uniform float u_color_saturation;
       uniform float u_contrast_multiplier;
       uniform float u_noise_amount;
@@ -396,17 +387,18 @@ export class HeroScene {
         // Mix colors with smooth transition
         vec3 color = mix(u_neutral_color, u_primary_color, color_mix);
         
-        // Apply style gauge controlled color saturation (preserve original lightness)
+        // Apply style gauge controlled color saturation with smooth transition
         float luminance = dot(color, vec3(0.299, 0.587, 0.114));
         vec3 saturated_color = mix(vec3(luminance), color, u_color_saturation);
         // Blend between original and saturated color to preserve lightness
-        color = mix(color, saturated_color, 0.7);
+        vec3 saturated_result = mix(color, saturated_color, 0.7);
+        color = mix(color, saturated_result, u_lighting_intensity);
         
-        // Add subtle distance-based variation for visual interest
+        // Add subtle distance-based variation for visual interest with smooth transition
         float distance_factor = sin(dist * u_distance_variation + u_time * u_distance_variation_speed) * u_distance_variation_intensity;
-        color += distance_factor;
+        color += distance_factor * u_lighting_intensity;
         
-        // Advanced lighting calculation with multiple techniques (now controlled by style gauge)
+        // Advanced lighting calculation with multiple techniques (now controlled by depth)
         vec3 light_dir = normalize(vec3(1.0, 1.0, 1.0));
         vec3 normal = normalize(vNormal);
         
@@ -414,31 +406,36 @@ export class HeroScene {
         vec3 light_dir2 = normalize(vec3(-0.5, 0.8, 0.3));
         vec3 light_dir3 = normalize(vec3(0.0, -0.5, 0.8));
         
-        // Enhanced diffuse lighting with soft shadows (now controlled by style gauge)
-        float diffuse1 = max(dot(normal, light_dir), 0.0) * u_highlight_power;
-        float diffuse2 = max(dot(normal, light_dir2), 0.0) * 0.4 * u_highlight_power;
-        float diffuse3 = max(dot(normal, light_dir3), 0.0) * 0.3 * u_highlight_power;
+        // Enhanced diffuse lighting with soft shadows
+        float diffuse1 = max(dot(normal, light_dir), 0.0);
+        float diffuse2 = max(dot(normal, light_dir2), 0.0) * 0.4;
+        float diffuse3 = max(dot(normal, light_dir3), 0.0) * 0.3;
         
-        // Improved specular lighting with fresnel effect (now controlled by style gauge)
+        // Improved specular lighting with fresnel effect
         vec3 view_dir = normalize(-vPosition);
         vec3 half_dir = normalize(light_dir + view_dir);
-        float specular = pow(max(dot(normal, half_dir), 0.0), 64.0) * 0.6 * u_highlight_power;
+        float specular = pow(max(dot(normal, half_dir), 0.0), 64.0) * 0.6;
         
-        // Fresnel effect for realistic edge lighting (now controlled by style gauge)
-        float fresnel = pow(1.0 - max(dot(normal, view_dir), 0.0), 3.0) * 0.3 * u_highlight_power;
+        // Fresnel effect for realistic edge lighting
+        float fresnel = pow(1.0 - max(dot(normal, view_dir), 0.0), 3.0) * 0.3;
         
-        // Distance-based ambient occlusion (now controlled by style gauge)
-        float ao = 1.0 - smoothstep(0.0, 0.5, dist) * u_shadow_power;
+        // Distance-based ambient occlusion
+        float ao = 1.0 - smoothstep(0.0, 0.5, dist) * 0.2;
         
         // Advanced lighting composition
         float ambient = 0.35;
         float lighting = ambient * ao + diffuse1 * 0.5 + diffuse2 + diffuse3 + specular + fresnel;
         
-        // Apply lighting to color with smooth falloff
-        color *= lighting;
+        // Interpolate between flat colors and 3D lighting based on depth
+        vec3 flat_color = color; // Original color without lighting
+        vec3 lit_color = color * lighting; // Color with full 3D lighting
         
-        // Apply style gauge controlled contrast
-        color = (color - 0.5) * u_contrast_multiplier + 0.5;
+        // Mix between flat and lit colors based on depth - smooth transition
+        color = mix(flat_color, lit_color, u_lighting_intensity);
+        
+        // Apply style gauge controlled contrast with smooth transition
+        vec3 contrasted_color = (color - 0.5) * u_contrast_multiplier + 0.5;
+        color = mix(color, contrasted_color, u_lighting_intensity);
         
         // Final color refinement and gamma correction
         color = pow(color, vec3(0.95)); // Slight gamma correction for better contrast
