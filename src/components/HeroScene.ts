@@ -96,6 +96,11 @@ export class HeroScene {
       transparent: true
     });
 
+    // Add error handling for shader compilation
+    material.onBeforeCompile = (shader) => {
+      console.log('Shader compilation started');
+    };
+
     // Store shader uniforms for potential use later
     this.shaderUniforms = {
       u_time: { value: 0.0 },
@@ -126,6 +131,25 @@ export class HeroScene {
 
     this.plane = new THREE.Mesh(geometry, material);
     this.scene.add(this.plane);
+
+    // Debug shader compilation
+    console.log('Shader material created:', material);
+    console.log('Shader uniforms:', material.uniforms);
+    console.log('Primary color:', primaryColor);
+    console.log('Neutral color:', neutralColor);
+    console.log('Ripple count:', tokens.three.shaders.ripple.count);
+    console.log('Style gauge values:', { depthValue, motionValue, intensityValue });
+
+    // Create a simple fallback material for testing
+    const fallbackMaterial = new THREE.MeshBasicMaterial({ 
+      color: 0xff0000, 
+      transparent: true, 
+      opacity: 0.5 
+    });
+    const fallbackPlane = new THREE.Mesh(geometry, fallbackMaterial);
+    fallbackPlane.position.z = -0.1; // Behind the main plane
+    this.scene.add(fallbackPlane);
+    console.log('Added fallback red plane for testing');
 
     // Set initial plane geometry size
     this.updatePlaneGeometry();
@@ -215,8 +239,8 @@ export class HeroScene {
       uniform float u_time;
       uniform vec2 u_mouse;
       uniform float u_wave_amplitude;
-      uniform float u_wave_frequency;
-      uniform float u_wave_speed;
+      uniform float u_ripple_count;
+      uniform float u_ripple_speed;
       uniform float u_twirl_intensity;
       
       varying vec2 vUv;
@@ -434,6 +458,13 @@ export class HeroScene {
     if (this.plane.material instanceof THREE.ShaderMaterial) {
       this.plane.material.uniforms.u_time.value = this.time;
       this.plane.material.uniforms.u_mouse.value.set(this.mouseX, this.mouseY);
+      
+      // Debug first few frames
+      if (this.time < 0.1) {
+        console.log('Animation frame:', this.time);
+        console.log('Mouse position:', this.mouseX, this.mouseY);
+        console.log('Scene children count:', this.scene.children.length);
+      }
     }
 
     this.renderer.render(this.scene, this.camera);
