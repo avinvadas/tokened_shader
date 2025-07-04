@@ -91,7 +91,8 @@ export class HeroScene {
         u_preserve_original_colors: { value: depthParams.preserveOriginalColors },
         u_color_saturation: { value: intensityParams.colorSaturation },
         u_contrast_multiplier: { value: intensityParams.contrastMultiplier },
-        u_noise_amount: { value: intensityParams.noiseAmount }
+        u_noise_amount: { value: intensityParams.noiseAmount },
+        u_line_ratio: { value: 0.5 } // Default to equal ratio
       },
       transparent: true
     });
@@ -101,33 +102,8 @@ export class HeroScene {
       console.log('Shader compilation started');
     };
 
-    // Store shader uniforms for potential use later
-    this.shaderUniforms = {
-      u_time: { value: 0.0 },
-      u_resolution: { value: new THREE.Vector2(this.canvas.clientWidth, this.canvas.clientHeight) },
-      u_mouse: { value: new THREE.Vector2(0.0, 0.0) },
-      u_primary_color: { value: new THREE.Vector3(primaryColor.r, primaryColor.g, primaryColor.b) },
-      u_neutral_color: { value: new THREE.Vector3(neutralColor.r, neutralColor.g, neutralColor.b) },
-      // Fragment shader parameters
-      u_ripple_count: { value: tokens.three.shaders.ripple.count },
-      u_ripple_speed: { value: tokens.three.shaders.ripple.speed },
-      u_ripple_width: { value: tokens.three.shaders.ripple.width },
-      u_transition_sharpness: { value: tokens.three.shaders.ripple.transitionSharpness },
-      u_distance_variation: { value: tokens.three.shaders.ripple.distanceVariation },
-      u_distance_variation_speed: { value: tokens.three.shaders.ripple.distanceVariationSpeed },
-      u_distance_variation_intensity: { value: tokens.three.shaders.ripple.distanceVariationIntensity },
-      // Vertex shader parameters (now controlled by style gauge)
-      u_wave_amplitude: { value: depthParams.vertexAmplitude },
-      u_wave_frequency: { value: motionParams.waveFrequency },
-      u_wave_speed: { value: motionParams.waveSpeed },
-      // New style gauge controlled parameters
-      u_twirl_intensity: { value: motionParams.twirlIntensity },
-      u_lighting_intensity: { value: depthParams.lightingIntensity },
-      u_preserve_original_colors: { value: depthParams.preserveOriginalColors },
-      u_color_saturation: { value: intensityParams.colorSaturation },
-      u_contrast_multiplier: { value: intensityParams.contrastMultiplier },
-      u_noise_amount: { value: intensityParams.noiseAmount }
-    };
+    // Store shader uniforms for potential use later (reference to material uniforms)
+    this.shaderUniforms = material.uniforms;
 
     this.plane = new THREE.Mesh(geometry, material);
     this.scene.add(this.plane);
@@ -332,6 +308,7 @@ export class HeroScene {
       uniform float u_color_saturation;
       uniform float u_contrast_multiplier;
       uniform float u_noise_amount;
+      uniform float u_line_ratio;
       
       varying vec2 vUv;
       varying float vWaveHeight;
@@ -383,6 +360,19 @@ export class HeroScene {
         float noise = fract(sin(dot(vUv * 100.0, vec2(12.9898, 78.233))) * 43758.5453);
         color_mix += (noise - 0.5) * u_noise_amount;
         color_mix = clamp(color_mix, 0.0, 1.0);
+        
+        // Apply line ratio to control the actual area size of primary vs neutral colors
+        // u_line_ratio: 0 = primary thin areas, 0.5 = equal areas, 1 = neutral thin areas
+        float threshold_adjustment = (u_line_ratio - 0.5) * 2.0; // Convert 0-1 to -1 to 1
+        
+        // Make transitions extra crisp at extremes (0.0 and 1.0)
+        float dynamic_transition_width = transition_width;
+        if (u_line_ratio < 0.1 || u_line_ratio > 0.9) {
+          // At extremes, use much sharper transitions
+          dynamic_transition_width = transition_width * 0.1; // 10x sharper
+        }
+        
+        color_mix = smoothstep(threshold_adjustment - dynamic_transition_width, threshold_adjustment + dynamic_transition_width, ripple);
         
         // Mix colors with smooth transition
         vec3 color = mix(u_neutral_color, u_primary_color, color_mix);
@@ -630,5 +620,28 @@ export class HeroScene {
     }
     window.removeEventListener('resize', this.handleResize.bind(this));
     this.renderer.dispose();
+  }
+
+  // Method to update primary color uniform
+  public updatePrimaryColor(color: string): void {
+    if (this.plane && this.plane.material instanceof THREE.ShaderMaterial && this.plane.material.uniforms) {
+      const rgb = this.hexToRgb(color);
+      this.plane.material.uniforms.u_primary_color.value.set(rgb.r, rgb.g, rgb.b);
+    }
+  }
+
+  // Method to update neutral color uniform
+  public updateNeutralColor(color: string): void {
+    if (this.plane && this.plane.material instanceof THREE.ShaderMaterial && this.plane.material.uniforms) {
+      const rgb = this.hexToRgb(color);
+      this.plane.material.uniforms.u_neutral_color.value.set(rgb.r, rgb.g, rgb.b);
+    }
+  }
+
+  // Method to update line ratio uniform
+  public updateLineRatio(value: number): void {
+    if (this.plane && this.plane.material instanceof THREE.ShaderMaterial && this.plane.material.uniforms) {
+      this.plane.material.uniforms.u_line_ratio.value = value;
+    }
   }
 } 

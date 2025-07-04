@@ -31,9 +31,10 @@ body {
   left: 0;
   right: 0;
   z-index: 1000;
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: transparent;
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--ref-color-neutral-200);
+  border-bottom: 1px solid rgb(255 255 255 / 10%);
+  transition: all 0.3s ease;
 }
 
 .nav {
@@ -149,7 +150,7 @@ body {
   border-radius: var(--comp-button-primary-border-radius);
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+  /* Box shadow will be controlled dynamically by depth value */
 }
 
 .hero__cta:hover {

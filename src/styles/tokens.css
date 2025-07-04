@@ -184,17 +184,17 @@
   --sys-typography-font-family-mono: var(--ref-font-family-mono);
   --sys-typography-font-family-display: var(--ref-font-family-secondary);
   
-  --sys-typography-font-size-body: var(--ref-font-size-base);
-  --sys-typography-font-size-body-small: var(--ref-font-size-sm);
-  --sys-typography-font-size-body-large: var(--ref-font-size-lg);
-  --sys-typography-font-size-heading-1: var(--ref-font-size-5xl);
-  --sys-typography-font-size-heading-2: var(--ref-font-size-4xl);
-  --sys-typography-font-size-heading-3: var(--ref-font-size-3xl);
-  --sys-typography-font-size-heading-4: var(--ref-font-size-2xl);
-  --sys-typography-font-size-heading-5: var(--ref-font-size-xl);
-  --sys-typography-font-size-heading-6: var(--ref-font-size-lg);
-  --sys-typography-font-size-caption: var(--ref-font-size-xs);
-  --sys-typography-font-size-display: var(--ref-font-size-8xl);
+  /* Dynamic typography sizes - controlled by JavaScript */
+  --sys-typography-font-size-small: 0.8rem;
+  --sys-typography-font-size-body: 1rem;
+  --sys-typography-font-size-large: 1.25rem;
+  --sys-typography-font-size-h6: 1.25rem;
+  --sys-typography-font-size-h5: 1.563rem;
+  --sys-typography-font-size-h4: 1.953rem;
+  --sys-typography-font-size-h3: 2.441rem;
+  --sys-typography-font-size-h2: 3.052rem;
+  --sys-typography-font-size-h1: 3.815rem;
+  --sys-typography-font-size-display: 4.768rem;
   
   --sys-typography-font-weight-body: var(--ref-font-weight-normal);
   --sys-typography-font-weight-heading: var(--ref-font-weight-semibold);
@@ -258,12 +258,12 @@
   --comp-hero-title-line-height: var(--sys-typography-line-height-heading);
   --comp-hero-title-letter-spacing: var(--sys-typography-letter-spacing-display);
   
-  --comp-hero-subtitle-font-size: var(--sys-typography-font-size-heading-3);
+  --comp-hero-subtitle-font-size: var(--sys-typography-font-size-h3);
   --comp-hero-subtitle-font-weight: var(--sys-typography-font-weight-light);
   --comp-hero-subtitle-color: var(--sys-color-text-secondary);
   --comp-hero-subtitle-line-height: var(--sys-typography-line-height-body);
   
-  --comp-hero-description-font-size: var(--sys-typography-font-size-body-large);
+  --comp-hero-description-font-size: var(--sys-typography-font-size-large);
   --comp-hero-description-font-weight: var(--sys-typography-font-weight-normal);
   --comp-hero-description-color: var(--sys-color-text-secondary);
   --comp-hero-description-line-height: var(--sys-typography-line-height-body);
@@ -271,12 +271,12 @@
   --comp-hero-background-background-color: var(--sys-color-background-primary);
   --comp-hero-background-padding: var(--sys-layout-section-padding);
   
-  --comp-section-title-font-size: var(--sys-typography-font-size-heading-2);
+  --comp-section-title-font-size: var(--sys-typography-font-size-h2);
   --comp-section-title-font-weight: var(--sys-typography-font-weight-bold);
   --comp-section-title-color: var(--sys-color-text-primary);
   --comp-section-title-line-height: var(--sys-typography-line-height-heading);
   
-  --comp-section-subtitle-font-size: var(--sys-typography-font-size-heading-4);
+  --comp-section-subtitle-font-size: var(--sys-typography-font-size-h4);
   --comp-section-subtitle-font-weight: var(--sys-typography-font-weight-medium);
   --comp-section-subtitle-color: var(--sys-color-text-secondary);
   --comp-section-subtitle-line-height: var(--sys-typography-line-height-body);

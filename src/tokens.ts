@@ -440,8 +440,8 @@ export const three = {
     ripple: {
       count: 7.0,
       speed: 0.5,
-      width: 0.1,
-      transitionSharpness: 1.0,
+      width: 0.02, // Reduced from 0.1 to 0.02 for thinner, crispier edges (1px)
+      transitionSharpness: 2.0, // Increased from 1.0 to 2.0 for sharper transitions
       distanceVariation: 20.0,
       distanceVariationSpeed: 0.5,
       distanceVariationIntensity: 0.1
