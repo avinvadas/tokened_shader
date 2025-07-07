@@ -288,4 +288,89 @@
   
   --comp-section-background-background-color: var(--sys-color-background-secondary);
   --comp-section-background-padding: var(--sys-layout-section-padding);
+}
+
+/* Typography System Classes - Applied by Style Gauge */
+.typography-system {
+  /* Font sizes - now using clamp() for body and vmin for larger text */
+  /* Dynamic typography variables - set by JavaScript */
+  --font-size-display: 10.0vmin;
+  --font-size-heading1: 7.0vmin;
+  --font-size-heading2: 5.0vmin;
+  --font-size-heading3: 3.8vmin;
+  --font-size-body: clamp(16px, 2.5vmin, 32px);
+  --font-size-caption: clamp(12px, 1.8vmin, 20px);
+  
+  /* Line heights */
+  --line-height-display: 1.1;
+  --line-height-heading1: 1.2;
+  --line-height-heading2: 1.3;
+  --line-height-heading3: 1.4;
+  --line-height-body: 1.5;
+  --line-height-caption: 1.4;
+  
+  /* Font weights */
+  --font-weight-display: 900;
+  --font-weight-heading1: 500;
+  --font-weight-heading2: 600;
+  --font-weight-heading3: 600;
+  --font-weight-body: 400;
+  --font-weight-caption: 400;
+  --font-weight-label: 500;
+  
+  /* Spacing */
+  --spacing-paragraph: var(--spacing-paragraph, 16px);
+  --spacing-section: var(--spacing-section, 32px);
+  --spacing-component: var(--spacing-component, 24px);
+  --spacing-element: var(--spacing-element, 8px);
+  
+  /* System properties */
+  --scale-ratio: var(--scale-ratio, 1.25);
+  --structure-depth: var(--structure-depth, 6);
+  --base-font-size: var(--base-font-size, 16px);
+  --accessibility-level: var(--accessibility-level, AA);
+  --min-contrast-ratio: var(--min-contrast-ratio, 4.5);
+}
+
+/* Typography utility classes */
+.text-display {
+  font-size: var(--font-size-display);
+  line-height: var(--line-height-display);
+  font-weight: var(--font-weight-display);
+}
+
+.text-heading1 {
+  font-size: var(--font-size-heading1);
+  line-height: var(--line-height-heading1);
+  font-weight: var(--font-weight-heading1);
+}
+
+.text-heading2 {
+  font-size: var(--font-size-heading2);
+  line-height: var(--line-height-heading2);
+  font-weight: var(--font-weight-heading2);
+}
+
+.text-heading3 {
+  font-size: var(--font-size-heading3);
+  line-height: var(--line-height-heading3);
+  font-weight: var(--font-weight-heading3);
+}
+
+.text-body {
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+  font-weight: var(--font-weight-body);
+}
+
+.text-caption {
+  font-size: var(--font-size-caption);
+  line-height: var(--line-height-caption);
+  font-weight: var(--font-weight-caption);
+}
+
+.text-label {
+  font-size: var(--font-size-caption);
+  line-height: var(--line-height-caption);
+  font-weight: var(--font-weight-label);
 } 

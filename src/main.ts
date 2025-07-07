@@ -43,6 +43,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize button shadow with current depth value
   updateButtonShadow(styleGauge.depth.medium);
   
+  // Initialize typography system
+  updateTypographySystem('marketing');
+  
   // Initialize typography settings
   updateTypographySettings('headingFont', typographySettings.headingFont);
   updateTypographySettings('bodyFont', typographySettings.bodyFont);
@@ -332,12 +335,85 @@ function setupStyleGaugeControls(): void {
   neutralColorContainer.appendChild(neutralColorSelect);
   generalContent.appendChild(neutralColorContainer);
 
+  // Add typography system selection
+  const typographySystemContainer = document.createElement('div');
+  typographySystemContainer.style.marginBottom = '15px';
+
+  const typographySystemLabel = document.createElement('label');
+  typographySystemLabel.textContent = 'Typography System: ';
+  typographySystemLabel.style.display = 'block';
+  typographySystemLabel.style.marginBottom = '5px';
+
+  const typographySystemSelect = document.createElement('select');
+  typographySystemSelect.style.width = '100%';
+  typographySystemSelect.style.padding = '5px';
+  typographySystemSelect.style.borderRadius = '4px';
+  typographySystemSelect.style.border = '1px solid #ccc';
+
+  const typographySystemOptions = [
+    { value: 'marketing', label: 'Marketing Landing Page' },
+    { value: 'dashboard', label: 'SaaS Dashboard' },
+    { value: 'mobile', label: 'Mobile App' }
+  ];
+
+  typographySystemOptions.forEach(option => {
+    const optionEl = document.createElement('option');
+    optionEl.value = option.value;
+    optionEl.textContent = option.label;
+    if (option.value === currentTypographySystem) {
+      optionEl.selected = true;
+    }
+    typographySystemSelect.appendChild(optionEl);
+  });
+
+  typographySystemSelect.addEventListener('change', (e) => {
+    const target = e.target as HTMLSelectElement;
+    updateTypographySystem(target.value as 'marketing' | 'dashboard' | 'mobile');
+  });
+
+  typographySystemContainer.appendChild(typographySystemLabel);
+  typographySystemContainer.appendChild(typographySystemSelect);
+  generalContent.appendChild(typographySystemContainer);
+
+  // Add typography system info display
+  const typographyInfoContainer = document.createElement('div');
+  typographyInfoContainer.style.marginBottom = '15px';
+  typographyInfoContainer.style.fontSize = '11px';
+  typographyInfoContainer.style.color = '#ccc';
+  typographyInfoContainer.style.fontStyle = 'italic';
+  typographyInfoContainer.id = 'typography-system-info';
+  
+  // Update the info display
+  function updateTypographyInfo() {
+    const config = styleGauge.typography[currentTypographySystem];
+    const fontSizes = styleGaugeMapping.typography.fontSizes(currentTypographySystem);
+    
+    typographyInfoContainer.innerHTML = `
+      <div><strong>${config.name}</strong></div>
+                      <div>Size Ratio: ${config.sizeRatio.toFixed(3)}</div>
+        <div>Base Unit: ${config.baseUnit.remValue}px</div>
+        <div>Structural Depth: ${config.structuralDepth} levels</div>
+        <div>Responsiveness: ${config.responsiveness.useVMinForHeadings ? 'vMin' : 'Fixed'}</div>
+        <div>Condensity: ${config.condensity.paragraphSpacing}</div>
+        <div>Body: ${fontSizes.body}</div>
+        <div>Accessibility: ${config.accessibility.level}</div>
+    `;
+  }
+  
+  // Initial update
+  updateTypographyInfo();
+  
+  // Store the update function globally for access
+  (window as any).updateTypographyInfo = updateTypographyInfo;
+  
+  generalContent.appendChild(typographyInfoContainer);
+
   // Add text color selection
   const textColorContainer = document.createElement('div');
   textColorContainer.style.marginBottom = '15px';
 
   const textColorLabel = document.createElement('label');
-  textColorLabel.textContent = 'Text Color: ';
+  textColorLabel.textContent = 'Text & Button Color: ';
   textColorLabel.style.display = 'block';
   textColorLabel.style.marginBottom = '5px';
 
@@ -348,8 +424,8 @@ function setupStyleGaugeControls(): void {
   textColorSelect.style.border = '1px solid #ccc';
 
   const textColorOptions = [
-    { value: 'primary', label: 'Primary Color' },
-    { value: 'opposite-neutral', label: 'Opposite Neutral' }
+    { value: 'primary', label: 'Primary Color (Adaptive)' },
+    { value: 'opposite-neutral', label: 'Best Contrast' }
   ];
 
   textColorOptions.forEach(option => {
@@ -370,45 +446,6 @@ function setupStyleGaugeControls(): void {
   textColorContainer.appendChild(textColorLabel);
   textColorContainer.appendChild(textColorSelect);
   generalContent.appendChild(textColorContainer);
-
-  // Add button color selection
-  const buttonColorContainer = document.createElement('div');
-  buttonColorContainer.style.marginBottom = '15px';
-
-  const buttonColorLabel = document.createElement('label');
-  buttonColorLabel.textContent = 'Button Color: ';
-  buttonColorLabel.style.display = 'block';
-  buttonColorLabel.style.marginBottom = '5px';
-
-  const buttonColorSelect = document.createElement('select');
-  buttonColorSelect.style.width = '100%';
-  buttonColorSelect.style.padding = '5px';
-  buttonColorSelect.style.borderRadius = '4px';
-  buttonColorSelect.style.border = '1px solid #ccc';
-
-  const buttonColorOptions = [
-    { value: 'primary', label: 'Primary Color' },
-    { value: 'opposite-neutral', label: 'Opposite Neutral' }
-  ];
-
-  buttonColorOptions.forEach(option => {
-    const optionElement = document.createElement('option');
-    optionElement.value = option.value;
-    optionElement.textContent = option.label;
-    buttonColorSelect.appendChild(optionElement);
-  });
-
-  // Default to primary
-  buttonColorSelect.value = 'primary';
-
-  buttonColorSelect.addEventListener('change', (e) => {
-    const buttonColorMode = (e.target as HTMLSelectElement).value as 'primary' | 'opposite-neutral';
-    updateButtonColorMode(buttonColorMode);
-  });
-
-  buttonColorContainer.appendChild(buttonColorLabel);
-  buttonColorContainer.appendChild(buttonColorSelect);
-  generalContent.appendChild(buttonColorContainer);
 
   // Create Typography Controls Section
   const typographySection = createCollapsibleSection('Typography Controls', false);
@@ -633,38 +670,6 @@ function setupStyleGaugeControls(): void {
   const shaderSection = createCollapsibleSection('Shader Controls', true);
   const shaderContent = shaderSection.content;
 
-  // Add line ratio controller
-  const lineRatioContainer = document.createElement('div');
-  lineRatioContainer.style.marginBottom = '15px';
-
-  const lineRatioLabel = document.createElement('label');
-  lineRatioLabel.textContent = 'Line Ratio: ';
-  lineRatioLabel.style.display = 'block';
-  lineRatioLabel.style.marginBottom = '5px';
-
-  const lineRatioSlider = document.createElement('input');
-  lineRatioSlider.type = 'range';
-  lineRatioSlider.min = '0';
-  lineRatioSlider.max = '1';
-  lineRatioSlider.step = '0.01';
-  lineRatioSlider.value = '0.5'; // Default to equal
-  lineRatioSlider.style.width = '100%';
-
-  const lineRatioValueDisplay = document.createElement('span');
-  lineRatioValueDisplay.textContent = '0.50 (Equal)';
-  lineRatioValueDisplay.style.marginLeft = '10px';
-  lineRatioValueDisplay.style.fontSize = '10px';
-
-  lineRatioSlider.addEventListener('input', (e) => {
-    const value = parseFloat((e.target as HTMLInputElement).value);
-    lineRatioValueDisplay.textContent = value.toFixed(2) + getLineRatioDescription(value);
-    updateLineRatio(value);
-  });
-
-  lineRatioContainer.appendChild(lineRatioLabel);
-  lineRatioContainer.appendChild(lineRatioSlider);
-  lineRatioContainer.appendChild(lineRatioValueDisplay);
-  shaderContent.appendChild(lineRatioContainer);
 
   // Add style gauge controls
   gauges.forEach(gauge => {
@@ -699,6 +704,38 @@ function setupStyleGaugeControls(): void {
     container.appendChild(valueDisplay);
     shaderContent.appendChild(container);
   });
+
+  // Add line ratio controller
+  const lineRatioContainer = document.createElement('div');
+  lineRatioContainer.style.marginBottom = '15px';
+
+  const lineRatioLabel = document.createElement('label');
+  lineRatioLabel.textContent = 'Line Ratio: ';
+  lineRatioLabel.style.display = 'block';
+  lineRatioLabel.style.marginBottom = '5px';
+
+  const lineRatioSlider = document.createElement('input');
+  lineRatioSlider.type = 'range';
+  lineRatioSlider.min = '0';
+  lineRatioSlider.max = '1';
+  lineRatioSlider.step = '0.01';
+  lineRatioSlider.value = '0.5';
+  lineRatioSlider.style.width = '100%';
+
+  const lineRatioValueDisplay = document.createElement('span');
+  lineRatioValueDisplay.textContent = '0.50 (Equal)';
+  lineRatioValueDisplay.style.marginLeft = '10px';
+
+  lineRatioSlider.addEventListener('input', (e) => {
+    const value = parseFloat((e.target as HTMLInputElement).value);
+    lineRatioValueDisplay.textContent = getLineRatioDescription(value);
+    updateLineRatio(value);
+  });
+
+  lineRatioContainer.appendChild(lineRatioLabel);
+  lineRatioContainer.appendChild(lineRatioSlider);
+  lineRatioContainer.appendChild(lineRatioValueDisplay);
+  shaderContent.appendChild(lineRatioContainer);
 
   // Add all sections to main container
   controlsContainer.appendChild(generalSection.container);
@@ -909,7 +946,59 @@ function getBestTextColor(): string {
   return primaryColor;
 }
 
-// Get the best button text color based on button color mode and button background
+// Get the best button background color based on text color mode and dominant background
+function getBestButtonBackgroundColor(): string {
+  const primaryColor = tokens.three.shaders.colors.primary;
+  const neutralColor = tokens.three.shaders.colors.neutral;
+  const dominantBackground = getDominantBackgroundColor();
+  
+  console.log(`=== getBestButtonBackgroundColor() DEBUG ===`);
+  console.log(`Primary color: ${primaryColor}`);
+  console.log(`Neutral color: ${neutralColor}`);
+  console.log(`Dominant background: ${dominantBackground}`);
+  console.log(`Current text color mode: ${currentTextColorMode}`);
+  console.log(`Line ratio: ${currentLineRatio}`);
+  
+  // Case 1: Primary mode + Neutral dominant → Use Primary color for button
+  if (currentTextColorMode === 'primary' && dominantBackground === neutralColor) {
+    console.log(`✅ Case 1 MATCHED: Primary mode + Neutral dominant → Using primary color for button: ${primaryColor}`);
+    return primaryColor;
+  } else {
+    console.log(`❌ Case 1 NOT MATCHED: mode=${currentTextColorMode} (expected 'primary'), dominant=${dominantBackground} (expected ${neutralColor})`);
+  }
+  
+  // Case 2: Primary mode + Primary dominant → Use shader's neutral color for button
+  if (currentTextColorMode === 'primary' && dominantBackground === primaryColor) {
+    console.log(`✅ Case 2 MATCHED: Primary mode + Primary dominant → Using shader's neutral color for button: ${neutralColor}`);
+    return neutralColor;
+  } else {
+    console.log(`❌ Case 2 NOT MATCHED: mode=${currentTextColorMode} (expected 'primary'), dominant=${dominantBackground} (expected ${primaryColor})`);
+  }
+  
+  // Case 3: Neutral contrast mode + Neutral dominant → Use Best contrasting color to neutral for button
+  if (currentTextColorMode === 'opposite-neutral' && dominantBackground === neutralColor) {
+    const bestContrastingColor = getBestContrastingColor(neutralColor);
+    console.log(`✅ Case 3 MATCHED: Neutral contrast mode + Neutral dominant → Using best contrasting color for button: ${bestContrastingColor}`);
+    return bestContrastingColor;
+  } else {
+    console.log(`❌ Case 3 NOT MATCHED: mode=${currentTextColorMode} (expected 'opposite-neutral'), dominant=${dominantBackground} (expected ${neutralColor})`);
+  }
+  
+  // Case 4: Neutral contrast mode + Primary dominant → Use Best contrasting neutral to primary for button
+  if (currentTextColorMode === 'opposite-neutral' && dominantBackground === primaryColor) {
+    const bestContrastingNeutral = getBestContrastingNeutral(primaryColor);
+    console.log(`✅ Case 4 MATCHED: Neutral contrast mode + Primary dominant → Using best contrasting neutral for button: ${bestContrastingNeutral}`);
+    return bestContrastingNeutral;
+  } else {
+    console.log(`❌ Case 4 NOT MATCHED: mode=${currentTextColorMode} (expected 'opposite-neutral'), dominant=${dominantBackground} (expected ${primaryColor})`);
+  }
+  
+  // Fallback
+  console.log(`⚠️ FALLBACK: No cases matched, using primary color for button: ${primaryColor}`);
+  return primaryColor;
+}
+
+// Get the best button text color based on button background
 function getBestButtonTextColor(buttonBackgroundColor: string): string {
   const primaryColor = tokens.three.shaders.colors.primary;
   const neutralColor = tokens.three.shaders.colors.neutral;
@@ -1060,24 +1149,14 @@ function loadGoogleFonts(headingFont: string, bodyFont: string): void {
   });
 }
 
-// Global variables to track color modes and line ratio
+// Global variables to track color modes, line ratio, and typography system
 let currentTextColorMode: 'primary' | 'opposite-neutral' = 'opposite-neutral';
-let currentButtonColorMode: 'primary' | 'opposite-neutral' = 'primary';
 let currentLineRatio: number = 0.5; // Default to equal
+let currentTypographySystem: 'marketing' | 'dashboard' | 'mobile' = 'marketing';
 
 // Update text color mode
 function updateTextColorMode(mode: 'primary' | 'opposite-neutral'): void {
   currentTextColorMode = mode;
-  
-  // Re-apply colors based on current mode
-  if (heroScene) {
-    updateUIWithPrimaryColor(tokens.three.shaders.colors.primary);
-  }
-}
-
-// Update button color mode
-function updateButtonColorMode(mode: 'primary' | 'opposite-neutral'): void {
-  currentButtonColorMode = mode;
   
   // Re-apply colors based on current mode
   if (heroScene) {
@@ -1147,7 +1226,6 @@ function updateLineRatio(value: number): void {
   console.log(`Neutral color: ${tokens.three.shaders.colors.neutral}`);
   console.log(`Dominant background: ${getDominantBackgroundColor()}`);
   console.log(`Text color mode: ${currentTextColorMode}`);
-  console.log(`Button color mode: ${currentButtonColorMode}`);
 
   // Re-apply colors to ensure contrast is calculated against the dominant color
   updateUIWithPrimaryColor(tokens.three.shaders.colors.primary);
@@ -1232,8 +1310,8 @@ function updateUIWithPrimaryColor(color: string): void {
   heroContentElements.forEach(element => {
     if (element instanceof HTMLElement) {
       if (element.classList.contains('hero__cta')) {
-        // For the CTA button, use selected button color mode
-        const buttonBackgroundColor = currentButtonColorMode === 'primary' ? color : getOppositeNeutralColor();
+        // For the CTA button, use the same logic as text color
+        const buttonBackgroundColor = getBestButtonBackgroundColor();
         element.style.setProperty('background-color', buttonBackgroundColor, 'important');
         element.style.setProperty('border-color', buttonBackgroundColor, 'important');
         
@@ -1271,6 +1349,51 @@ function updateUIWithPrimaryColor(color: string): void {
   const debugTitle = document.querySelector('.debug__panel h3');
   if (debugTitle instanceof HTMLElement) {
     debugTitle.style.color = color;
+  }
+}
+
+// Update typography system
+function updateTypographySystem(system: 'marketing' | 'dashboard' | 'mobile'): void {
+  currentTypographySystem = system;
+  console.log(`Switching to typography system: ${system}`);
+  
+  // Get the typography configuration for the selected system
+  const config = styleGauge.typography[system];
+  console.log(`Typography system config:`, config);
+  
+  // Generate CSS variables for the selected system
+  const cssVariables = styleGaugeMapping.typography.cssVariables(system);
+  
+  // Apply CSS variables to the body element (which has the typography-system class)
+  Object.entries(cssVariables).forEach(([property, value]) => {
+    document.body.style.setProperty(property, value);
+    console.log(`Set CSS variable: ${property} = ${value}`);
+  });
+  
+  // Log the generated font sizes for debugging
+  const fontSizes = styleGaugeMapping.typography.fontSizes(system);
+  console.log(`Typography system "${system}" font sizes:`, fontSizes);
+  
+  // Add typography-system class to body for CSS inheritance
+  document.body.classList.add('typography-system');
+  
+  // Update typography settings based on the system
+  updateTypographySettings('headingFont', 'Inter'); // Default font
+  updateTypographySettings('bodyFont', 'Inter'); // Default font
+  updateTypographySettings('fontWeight', config.weightDistribution.body);
+        updateTypographySettings('lineHeight', config.lineFlow.body);
+      updateTypographySettings('baseFontSize', config.baseUnit.remValue);
+      updateTypographySettings('scaleRatio', config.sizeRatio);
+  
+  // Load Google Fonts
+  loadGoogleFonts('Inter', 'Inter');
+  
+  console.log(`Applied typography system: ${config.name}`);
+  console.log(`CSS variables applied:`, cssVariables);
+  
+  // Update the typography info display
+  if ((window as any).updateTypographyInfo) {
+    (window as any).updateTypographyInfo();
   }
 }
 
